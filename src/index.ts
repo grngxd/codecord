@@ -8,17 +8,25 @@ const now = Date.now();
 let rpc: Client;
 let status: vs.StatusBarItem;
 
+let idleTimeout: number | undefined;
+
 const updateActivity = debounce(() => {
     const editor = vs.window.activeTextEditor;
+    
     if (!editor) {
-        rpc.user?.setActivity({
-            startTimestamp: now,
-            state: "Idling",
-            largeImageKey: "idle",
-            largeImageText: "Idle",
-        });
+        if (idleTimeout) clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => {
+            rpc.user?.setActivity({
+                startTimestamp: now,
+                state: "Idling",
+                largeImageKey: "idle",
+                largeImageText: "Idle",
+            });
+        }, 5 * 60 * 1000);
+        output.appendLine("No active editor, setting idle activity.");
         return;
     }
+    if (idleTimeout) clearTimeout(idleTimeout);
 
     const fileName = editor.document.fileName.split(/[\\/]/).pop();
     const workspace = vs.workspace.name || "No Workspace";
@@ -56,8 +64,6 @@ export const activate = (ctx: vs.ExtensionContext) => {
 
         ctx.subscriptions.push(
             vs.window.onDidChangeActiveTextEditor(updateActivity),
-            vs.workspace.onDidOpenTextDocument(updateActivity),
-            vs.workspace.onDidCloseTextDocument(updateActivity)
         );
     });
 
