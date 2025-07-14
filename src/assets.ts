@@ -14,7 +14,7 @@ export const languages = [
 
     "python",
 
-    
+    "c",
     "cpp",
     "csharp"
 ]
