@@ -1,0 +1,44 @@
+{
+  "name": "vscode-starter",
+  "displayName": "VSCode Starter",
+  "description": "A starter template for VS Code extensions.",
+  "publisher": "your-publisher-name",
+  "version": "0.0.1",
+  "main": "out/extension.cjs",
+  "module": "index.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "bun run ./scripts/build.ts",
+    "package": "bun run build && vsce package --no-dependencies",
+    "publish": "@vscode/vsce publish --no-dependencies",
+    "release": "bun package && bun publish"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/vscode": "^1.102.0",
+    "esbuild": "^0.25.6",
+    "@vscode/vsce": "^3.6.0"
+  },
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "category": "VSCode Starter",
+        "command": "vscode-extension.sayHello",
+        "title": "Say Hello"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grngxd/vscode-starter"
+  },
+  "trustedDependencies": [
+    "@vscode/vsce-sign"
+  ]
+}
