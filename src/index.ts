@@ -1,14 +1,14 @@
 import { Client } from '@xhayper/discord-rpc';
 import * as vs from 'vscode';
 import { registerCommands } from './commands';
-import { output } from './lib';
+import { debounce, output } from './lib';
 
 const now = Date.now();
 
 let rpc: Client;
 let status: vs.StatusBarItem;
 
-const updateActivity = () => {
+const updateActivity = debounce(() => {
     const editor = vs.window.activeTextEditor;
     if (!editor) {
         rpc.user?.setActivity({
@@ -22,8 +22,10 @@ const updateActivity = () => {
 
     const fileName = editor.document.fileName.split(/[\\/]/).pop();
     const workspace = vs.workspace.name || "No Workspace";
-    const language = editor.document.languageId;
+    const language = editor.document.languageId.toLowerCase();
     const problems = vs.languages.getDiagnostics(editor.document.uri).length;
+
+    output.appendLine(`Updating activity: ${fileName} (${language}) in ${workspace}`);  
 
     rpc.user?.setActivity({
         startTimestamp: now,
@@ -32,7 +34,7 @@ const updateActivity = () => {
         largeImageKey: language,
         largeImageText: language,
     });
-}
+}, 150);
 
 export const activate = (ctx: vs.ExtensionContext) => {
     registerCommands(ctx);
