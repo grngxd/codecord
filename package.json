@@ -1,8 +1,8 @@
 {
-  "name": "vscode-starter",
-  "displayName": "VSCode Starter",
-  "description": "A starter template for VS Code extensions.",
-  "publisher": "your-publisher-name",
+  "name": "codecord",
+  "displayName": "Codecord",
+  "description": "discord integration for vscode",
+  "publisher": "grngxd",
   "version": "0.0.1",
   "main": "out/extension.cjs",
   "module": "index.ts",
@@ -13,7 +13,9 @@
     "publish": "@vscode/vsce publish --no-dependencies",
     "release": "bun package && bun publish"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@xhayper/discord-rpc": "^1.2.2"
+  },
   "devDependencies": {
     "@types/vscode": "^1.102.0",
     "esbuild": "^0.25.6",
@@ -27,16 +29,12 @@
   ],
   "contributes": {
     "commands": [
-      {
-        "category": "VSCode Starter",
-        "command": "vscode-extension.sayHello",
-        "title": "Say Hello"
-      }
+
     ]
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/grngxd/vscode-starter"
+    "url": "https://github.com/grngxd/codecord"
   },
   "trustedDependencies": [
     "@vscode/vsce-sign"
