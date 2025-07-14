@@ -21,10 +21,10 @@ const updateActivity = debounce(() => {
                 startTimestamp: now,
                 state: "Idling",
                 largeImageKey: "idle",
-                largeImageText: "Idle",
+                largeImageText: "idle",
             });
-        }, 5 * 60 * 1000);
-        output.appendLine("No active editor, setting idle activity.");
+            output.appendLine("No active editor, setting idle activity.");
+        }, 5 * 1000);
         return;
     }
     if (idleTimeout) clearTimeout(idleTimeout);
@@ -36,14 +36,17 @@ const updateActivity = debounce(() => {
 
     const key = languages.includes(language) ? language : "plaintext";
 
-    output.appendLine(`Updating activity: ${fileName} (${language}) in ${workspace}`);  
-
     rpc.user?.setActivity({
         startTimestamp: now,
         details: `Workspace: ${workspace}`,
-        state: `Editing ${fileName}${problems > 0 ? ` (${problems} problems found)` : ''}`,
+        state: `Editing ${fileName}${problems > 0 ? ` (${problems} ${problems > 1 ? "problems": "problem"} found)` : ''}`,
         largeImageKey: key,
-        largeImageText: key,
+        largeImageText: language.padEnd(2, ' '),
+    }).then(() => {
+            output.appendLine(`Updating activity: ${fileName} (${language}) in ${workspace}`);  
+    }).catch(err => {
+        output.appendLine(`Failed to update activity: ${err.message}`);
+        vs.window.showErrorMessage(`Failed to update activity: ${err.message}`);
     });
 }, 150);
 
