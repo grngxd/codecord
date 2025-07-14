@@ -3,6 +3,8 @@ import * as vs from 'vscode';
 import { registerCommands } from './commands';
 import { output } from './lib';
 
+const now = Date.now();
+
 let rpc: Client;
 let status: vs.StatusBarItem;
 
@@ -10,6 +12,7 @@ const updateActivity = () => {
     const editor = vs.window.activeTextEditor;
     if (!editor) {
         rpc.user?.setActivity({
+            startTimestamp: now,
             state: "Idling",
             largeImageKey: "idle",
             largeImageText: "Idle",
@@ -23,6 +26,7 @@ const updateActivity = () => {
     const problems = vs.languages.getDiagnostics(editor.document.uri).length;
 
     rpc.user?.setActivity({
+        startTimestamp: now,
         details: `Workspace: ${workspace}`,
         state: `Editing ${fileName}${problems > 0 ? ` (${problems} problems found)` : ''}`,
         largeImageKey: language,
