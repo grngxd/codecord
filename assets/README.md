@@ -1,0 +1,1 @@
+this project uses some assets from [leonardssh's vscord extension](https://github.com/leonardssh/vscord) and would definitely not be possible without it, his assets follow the MIT license.

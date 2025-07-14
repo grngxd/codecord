@@ -6,6 +6,30 @@ import { output } from './lib';
 let rpc: Client;
 let status: vs.StatusBarItem;
 
+const updateActivity = () => {
+    const editor = vs.window.activeTextEditor;
+    if (!editor) {
+        rpc.user?.setActivity({
+            state: "Idling",
+            largeImageKey: "idle",
+            largeImageText: "Idle",
+        });
+        return;
+    }
+
+    const fileName = editor.document.fileName.split(/[\\/]/).pop();
+    const workspace = vs.workspace.name || "No Workspace";
+    const language = editor.document.languageId;
+    const problems = vs.languages.getDiagnostics(editor.document.uri).length;
+
+    rpc.user?.setActivity({
+        details: `Workspace: ${workspace}`,
+        state: `Editing ${fileName}${problems > 0 ? ` (${problems} problems found)` : ''}`,
+        largeImageKey: language,
+        largeImageText: language,
+    });
+}
+
 export const activate = (ctx: vs.ExtensionContext) => {
     registerCommands(ctx);
     status = vs.window.createStatusBarItem(vs.StatusBarAlignment.Left, 100);
@@ -21,12 +45,14 @@ export const activate = (ctx: vs.ExtensionContext) => {
 
     rpc.on("ready", () => {
         output.appendLine(`codecord is ready! logged in as @${rpc.user?.username}.`);
-
-        rpc.user?.setActivity({
-            state: "Idling",
-        });
-
+        updateActivity();
         status.text = `Codecord: Connected`;
+
+        ctx.subscriptions.push(
+            vs.window.onDidChangeActiveTextEditor(updateActivity),
+            vs.workspace.onDidOpenTextDocument(updateActivity),
+            vs.workspace.onDidCloseTextDocument(updateActivity)
+        );
     });
 
     rpc.login().catch(err => {
