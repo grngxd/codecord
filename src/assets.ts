@@ -5,5 +5,16 @@ export const languages = [
 
     "log",
     "plaintext",
+
     "typescript",
+    "typescriptreact",
+
+    "javascript",
+    "javascriptreact",
+
+    "python",
+
+    
+    "cpp",
+    "csharp"
 ]

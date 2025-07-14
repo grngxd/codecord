@@ -1,5 +1,6 @@
 import { Client } from '@xhayper/discord-rpc';
 import * as vs from 'vscode';
+import { languages } from './assets';
 import { registerCommands } from './commands';
 import { debounce, output } from './lib';
 
@@ -12,7 +13,7 @@ let idleTimeout: number | undefined;
 
 const updateActivity = debounce(() => {
     const editor = vs.window.activeTextEditor;
-    
+
     if (!editor) {
         if (idleTimeout) clearTimeout(idleTimeout);
         idleTimeout = setTimeout(() => {
@@ -33,14 +34,16 @@ const updateActivity = debounce(() => {
     const language = editor.document.languageId.toLowerCase();
     const problems = vs.languages.getDiagnostics(editor.document.uri).length;
 
+    const key = languages.includes(language) ? language : "plaintext";
+
     output.appendLine(`Updating activity: ${fileName} (${language}) in ${workspace}`);  
 
     rpc.user?.setActivity({
         startTimestamp: now,
         details: `Workspace: ${workspace}`,
         state: `Editing ${fileName}${problems > 0 ? ` (${problems} problems found)` : ''}`,
-        largeImageKey: language,
-        largeImageText: language,
+        largeImageKey: key,
+        largeImageText: key,
     });
 }, 150);
 
